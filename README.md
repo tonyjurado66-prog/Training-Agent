@@ -34,6 +34,13 @@ une formation technique (*Excel : tableaux croisés dynamiques*) et une formatio
 Le studio a un mode **« Clé API (test) »** : vous collez votre clé Anthropic dans la page et le navigateur appelle directement l'API.
 Pratique pour essayer un brouillon de formation, **mais réservé à vos tests** : la clé est visible par quiconque utilise la page. Pour vos apprenants, utilisez toujours le mode serveur.
 
+### Sans clé API : la version publiée sur claude.ai
+
+Le dossier `artifact/` contient une version du tuteur publiée comme page claude.ai. Claude y est appelé **avec le compte de chaque apprenant** : pas de clé API ni de serveur, mais chaque apprenant doit avoir un compte Claude et autoriser la page au premier message.
+
+- Pour y ajouter vos formations : placez le JSON dans `courses/`, lancez `node artifact/build.mjs`, puis republiez `artifact/tuteur-claude.html`.
+- La page est privée tant que vous ne la partagez pas (menu « Partager » sur claude.ai).
+
 ## Créer votre formation
 
 1. Ouvrez le studio, cliquez sur **+ Nouvelle formation**.

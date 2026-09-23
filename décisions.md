@@ -69,3 +69,17 @@ La consigne était de travailler seul, sans poser de questions. Voici chaque dé
 - Formats de contenu importables dans le studio : texte (`.txt`, `.md`). Pour un PDF ou une vidéo, collez le texte ou la transcription.
 - Les très longues conversations sont plafonnées (message invitant à démarrer une nouvelle session, le profil étant conservé).
 - Les tests automatisés utilisent un faux client Claude : ils valident la mécanique (outils, streaming, interface) mais pas la qualité pédagogique des réponses, à évaluer sur de vraies sessions.
+
+## 7. Version sans clé API (page publiée sur claude.ai)
+
+Fichiers : `artifact/tuteur.src.html` (source), `artifact/build.mjs` (intègre les formations de `courses/`), `artifact/tuteur-claude.html` (page générée et publiée).
+
+| # | Décision | Pourquoi | Pour changer |
+|---|---|---|---|
+| 7.1 | Le tuteur est publié comme **page claude.ai** qui appelle Claude **avec le compte de l'apprenant** (capacité `sample`). | C'est la seule façon d'utiliser Claude sans clé API : chaque apprenant consomme son propre quota claude.ai, vous ne payez rien. En contrepartie, chaque apprenant doit avoir un compte Claude et accepter la demande d'autorisation au premier message. | — |
+| 7.2 | **Profil et conversation stockés dans le navigateur** de l'apprenant, pas dans la base de données partagée de claude.ai. | Utiliser cette base aurait rendu la page accessible seulement aux membres de votre organisation claude.ai, donc impossible à partager avec vos apprenants. | — |
+| 7.3 | **Pas d'outils** : Claude renvoie son message suivi d'un bloc de données caché (repère `<<<ETAT>>>` puis JSON avec profil, progression, quiz), que la page lit. | Sur claude.ai, chaque appel d'outil ajoute un aller-retour payé par l'apprenant et plusieurs dizaines de secondes. Une seule réponse en streaming garde la conversation fluide. | `instructions()` et `applyState()` dans `tuteur.src.html`. |
+| 7.4 | Réponses **« Approfondies » par défaut**, avec un bouton **« Rapides »**. | Le mode approfondi pense avant de répondre (meilleure pédagogie, 5 à 60 s d'attente). Le mode rapide répond presque tout de suite ; le choix est laissé à l'apprenant et mémorisé. | Valeur initiale de `state.tier`. |
+| 7.5 | Les **40 derniers messages** seulement sont renvoyés à Claude ; le profil sert de mémoire longue. | La plateforme limite chaque requête à 64 Ko de texte. | `MAX_TURNS`. |
+| 7.6 | Les formations sont **intégrées dans la page** ; un bouton « Importer… » charge un JSON du studio **dans le navigateur de la personne seulement**. | Une page publiée ne peut pas lire votre serveur. Pour qu'une formation soit visible de tous, ajoutez-la dans `courses/`, lancez `node artifact/build.mjs` et republiez la page (ou demandez-le à Claude Code). | — |
+| 7.7 | La page est **privée à sa publication**. | Réglage par défaut de claude.ai : c'est vous qui choisissez avec qui la partager (menu « Partager » de la page). | Menu « Partager ». |
