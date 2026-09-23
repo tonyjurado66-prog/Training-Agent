@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Studio Tuteur IA</title>
+  <meta name="description" content="Créez une formation, testez le tuteur IA adaptatif et récupérez le code d'intégration.">
+  <link rel="stylesheet" href="studio.css">
+  <!-- Mode « clé API » : permet au SDK Anthropic servi par le serveur de se charger dans le navigateur. -->
+  <script type="importmap">{ "imports": { "standardwebhooks": "./core/shims/standardwebhooks.js" } }</script>
+  <script type="module" src="widget/training-agent.js"></script>
+  <script type="module" src="studio.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">IA</span>
+      <div>
+        <h1>Studio Tuteur IA</h1>
+        <p>Un agent conversationnel qui adapte votre formation à chaque apprenant</p>
+      </div>
+    </div>
+    <nav class="toplinks">
+      <a href="demo.html">Voir la démo intégrée ↗</a>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <section class="config" aria-label="Configuration">
+
+      <details class="card" open>
+        <summary><span class="step">1</span> Connexion à l'IA</summary>
+        <div class="card-body">
+          <fieldset class="segmented" id="mode">
+            <legend class="sr-only">Mode de connexion</legend>
+            <label><input type="radio" name="mode" value="server" checked> Serveur</label>
+            <label><input type="radio" name="mode" value="direct"> Clé API (test)</label>
+          </fieldset>
+          <p class="hint" id="server-status">Vérification du serveur…</p>
+          <div id="direct-fields" hidden>
+            <label>Clé API Anthropic
+              <input type="password" id="api-key" autocomplete="off" placeholder="sk-ant-…">
+            </label>
+            <p class="hint warn">La clé reste dans cet onglet (sessionStorage) et part directement vers l'API Anthropic. Mode réservé à vos tests : ne publiez jamais une page contenant une clé.</p>
+            <div class="row">
+              <label>Modèle
+                <input id="model" value="claude-opus-5" list="models">
+                <datalist id="models">
+                  <option value="claude-opus-5"><option value="claude-sonnet-5"><option value="claude-haiku-4-5">
+                </datalist>
+              </label>
+              <label>Effort
+                <select id="effort">
+                  <option value="low">low</option>
+                  <option value="medium" selected>medium</option>
+                  <option value="high">high</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="card" open>
+        <summary><span class="step">2</span> Formation</summary>
+        <div class="card-body">
+          <label>Formation à utiliser
+            <select id="course-select"></select>
+          </label>
+          <div class="row buttons">
+            <button type="button" id="new-course">+ Nouvelle formation</button>
+            <label class="button">Importer JSON<input type="file" id="import-json" accept=".json,application/json" hidden></label>
+            <button type="button" id="export-json">Exporter JSON</button>
+          </div>
+
+          <form id="course-form" class="editor" autocomplete="off">
+            <label>Titre *<input name="title" required placeholder="Ex. Les bases de la comptabilité"></label>
+            <div class="row">
+              <label>Identifiant<input name="id" placeholder="auto" pattern="[a-z0-9-]*"></label>
+              <label>Langue<input name="language" value="fr" maxlength="10"></label>
+            </div>
+            <label>Public visé<textarea name="audience" rows="2"></textarea></label>
+            <label>Description<textarea name="description" rows="2"></textarea></label>
+            <label>Objectifs pédagogiques <small>(un par ligne)</small><textarea name="objectives" rows="3"></textarea></label>
+            <label>Prérequis <small>(un par ligne)</small><textarea name="prerequisites" rows="2"></textarea></label>
+            <label>Ton souhaité<input name="tone" placeholder="Ex. bienveillant, concret, tutoiement"></label>
+            <label>Message d'accueil<textarea name="welcome" rows="2"></textarea></label>
+            <label>Consignes au tuteur <small>(facultatif)</small><textarea name="instructions" rows="3" placeholder="Ex. Toujours partir d'un cas client ; ne jamais donner la solution des exercices notés."></textarea></label>
+
+            <div class="modules-head">
+              <h3>Modules</h3>
+              <button type="button" id="add-module">+ Module</button>
+            </div>
+            <ol id="modules" class="modules"></ol>
+          </form>
+
+          <div class="save-box" id="save-box">
+            <label>Jeton d'administration <small>(ADMIN_TOKEN du serveur)</small>
+              <input type="password" id="admin-token" autocomplete="off">
+            </label>
+            <button type="button" id="save-server" class="primary">Enregistrer sur le serveur</button>
+          </div>
+          <p class="hint" id="course-status" role="status"></p>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary><span class="step">3</span> Apprenant simulé</summary>
+        <div class="card-body">
+          <label>Identifiant d'apprenant
+            <input id="learner-id" value="test-formateur">
+          </label>
+          <p class="hint">Changez l'identifiant pour simuler un nouvel apprenant : chaque profil est mémorisé séparément.</p>
+          <div class="row buttons">
+            <button type="button" id="show-profile">Voir le profil (JSON)</button>
+            <button type="button" id="reset-learner">Réinitialiser cet apprenant</button>
+          </div>
+          <pre id="profile-json" hidden></pre>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary><span class="step">4</span> Intégrer à votre site</summary>
+        <div class="card-body">
+          <p class="hint">Copiez ce code dans n'importe quelle page (WordPress, Moodle, Wix, Webflow, LMS…).</p>
+          <fieldset class="segmented" id="embed-mode">
+            <legend class="sr-only">Affichage</legend>
+            <label><input type="radio" name="embed" value="floating" checked> Bulle flottante</label>
+            <label><input type="radio" name="embed" value="inline"> Dans la page</label>
+          </fieldset>
+          <pre id="embed-code"></pre>
+          <button type="button" id="copy-embed">Copier le code</button>
+        </div>
+      </details>
+    </section>
+
+    <section class="preview" aria-label="Aperçu">
+      <div class="preview-head">
+        <h2>Aperçu en direct</h2>
+        <p class="hint" id="preview-hint"></p>
+      </div>
+      <div class="preview-frame" id="preview"></div>
+    </section>
+  </main>
+
+  <template id="module-template">
+    <li class="module">
+      <div class="module-top">
+        <strong class="module-num"></strong>
+        <button type="button" class="up" aria-label="Monter">↑</button>
+        <button type="button" class="down" aria-label="Descendre">↓</button>
+        <button type="button" class="remove" aria-label="Supprimer le module">✕</button>
+      </div>
+      <label>Titre<input data-f="title"></label>
+      <label>Objectifs du module <small>(un par ligne)</small><textarea data-f="objectives" rows="2"></textarea></label>
+      <label>Contenu <small>(texte du cours, notes, transcription…)</small><textarea data-f="content" rows="6"></textarea></label>
+      <label class="button small">Importer un fichier texte (.txt, .md)<input type="file" class="import-text" accept=".txt,.md,.csv,text/*" hidden></label>
+    </li>
+  </template>
+</body>
+</html>

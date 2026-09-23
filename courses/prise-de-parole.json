@@ -1,0 +1,55 @@
+{
+  "id": "prise-de-parole",
+  "title": "Prendre la parole en public avec aisance",
+  "language": "fr",
+  "audience": "Toute personne amenée à présenter devant un groupe : réunion, soutenance, pitch, formation, discours.",
+  "description": "Gérer son trac, structurer un message clair et captiver son auditoire, avec des mises en situation adaptées à ses propres enjeux.",
+  "objectives": [
+    "Comprendre et apprivoiser son trac",
+    "Structurer une intervention autour d'un message clé",
+    "Utiliser sa voix, son regard et sa posture au service du message",
+    "Gérer les questions et les situations difficiles"
+  ],
+  "tone": "Chaleureux, encourageant et pratique. Beaucoup de mises en situation, peu de théorie.",
+  "welcome": "Bonjour ! Je vais vous accompagner pour gagner en aisance à l'oral. Tout part de votre situation réelle : **avez-vous une prise de parole à préparer prochainement** (réunion, présentation, entretien…) ?",
+  "instructions": "Cette formation est une formation de savoir-être : les quiz servent surtout à ancrer les notions clés ; privilégie les exercices pratiques (rédiger une accroche, reformuler un message clé en une phrase, préparer une réponse à une question piège) et donne un retour précis et bienveillant sur ce que l'apprenant écrit. Ne pose jamais de diagnostic médical ; si l'anxiété semble très invalidante, suggère avec tact d'en parler à un professionnel.",
+  "modules": [
+    {
+      "id": "trac",
+      "title": "Apprivoiser son trac",
+      "objectives": [
+        "Comprendre le mécanisme du trac",
+        "Pratiquer deux techniques de régulation"
+      ],
+      "content": "Le trac est une réaction de stress normale (adrénaline) : cœur qui accélère, mains moites, voix qui tremble. Il ne disparaît pas, il se gère ; un peu de trac améliore même la concentration.\n\nAvant : se préparer (la principale source de trac est la peur de l'improvisation), répéter à voix haute au moins trois fois, visualiser le début de l'intervention qui se passe bien.\nJuste avant : respiration abdominale lente (inspirer 4 s par le nez, expirer 6 s par la bouche, 5 fois), ancrage des pieds dans le sol, relâcher les épaules.\nPendant : connaître par cœur ses 2 premières phrases, chercher des visages bienveillants, s'autoriser des pauses (elles paraissent beaucoup plus courtes au public qu'à l'orateur)."
+    },
+    {
+      "id": "message",
+      "title": "Structurer son message",
+      "objectives": [
+        "Formuler un message clé en une phrase",
+        "Construire une intervention accroche / développement / conclusion"
+      ],
+      "content": "Tout commence par le message clé : ce que le public doit retenir s'il ne retient qu'une chose, en une phrase de moins de 20 mots.\n\nStructure : accroche (question, chiffre frappant, anecdote — jamais « Bonjour, je vais vous parler de… ») ; annonce du plan en 2 ou 3 parties ; développement avec une idée par partie illustrée d'un exemple concret ; conclusion qui répète le message clé et termine par un appel à l'action.\n\nRègle de 3 : trois idées maximum, le public en retient rarement plus. Adapter au public : que sait-il déjà ? qu'attend-il ? quelles objections aura-t-il ?"
+    },
+    {
+      "id": "non-verbal",
+      "title": "Voix, regard et posture",
+      "objectives": [
+        "Utiliser le regard pour créer le lien",
+        "Moduler sa voix (débit, volume, pauses)",
+        "Adopter une posture ouverte et stable"
+      ],
+      "content": "Regard : balayer toute la salle en posant le regard 2 à 3 secondes sur une personne, puis une autre, dans différentes zones. En visio : regarder la caméra aux moments importants.\n\nVoix : ralentir (le stress accélère le débit), articuler, projeter la voix vers le fond de la salle, marquer des pauses avant et après une idée importante, varier l'intonation pour éviter la monotonie.\n\nPosture : pieds ancrés largeur des hanches, poids réparti, mains visibles au-dessus de la taille, gestes qui accompagnent le propos ; éviter de se balancer, de croiser les bras, de tourner le dos au public pour lire les diapositives."
+    },
+    {
+      "id": "questions",
+      "title": "Gérer les questions et imprévus",
+      "objectives": [
+        "Répondre à une question avec la méthode écouter / reformuler / répondre / vérifier",
+        "Réagir à une question hostile ou à un trou de mémoire"
+      ],
+      "content": "Méthode : écouter la question jusqu'au bout, la reformuler (on gagne du temps et on s'assure de l'avoir comprise), répondre brièvement, vérifier (« cela répond-il à votre question ? »).\n\nQuestion hostile : rester calme, reconnaître l'émotion ou le point légitime, revenir aux faits, ne pas se justifier longuement ; proposer d'approfondir après la séance si besoin. Ne pas connaître la réponse : le dire honnêtement et s'engager à revenir vers la personne.\n\nTrou de mémoire : faire une pause, reformuler ce qui vient d'être dit, consulter ses notes (des mots-clés, pas un texte rédigé) ; le public ne s'en aperçoit presque jamais."
+    }
+  ]
+}

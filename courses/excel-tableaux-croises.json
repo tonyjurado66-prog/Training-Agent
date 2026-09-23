@@ -1,0 +1,68 @@
+{
+  "id": "excel-tableaux-croises",
+  "title": "Excel : maîtriser les tableaux croisés dynamiques",
+  "language": "fr",
+  "audience": "Salariés et indépendants qui manipulent des données dans Excel (ventes, RH, gestion) et veulent produire des synthèses fiables sans formules complexes.",
+  "description": "Apprendre à préparer ses données, construire, filtrer et mettre en forme des tableaux croisés dynamiques (TCD) pour analyser rapidement un fichier.",
+  "prerequisites": [
+    "Savoir ouvrir un classeur, sélectionner des cellules et saisir des données dans Excel"
+  ],
+  "objectives": [
+    "Préparer une source de données exploitable par un TCD",
+    "Construire un TCD répondant à une question métier",
+    "Filtrer, trier et regrouper les données d'un TCD",
+    "Calculer des pourcentages et des champs calculés",
+    "Actualiser et présenter un TCD (graphique croisé, segments)"
+  ],
+  "tone": "Concret et bienveillant, avec des exemples tirés du quotidien professionnel de l'apprenant (ventes, RH, stocks…).",
+  "welcome": "Bonjour 👋 Je suis votre tuteur pour apprendre les **tableaux croisés dynamiques** dans Excel. Je vais adapter le parcours à votre niveau et à vos propres données. Pour commencer : dans quel contexte utilisez-vous Excel aujourd'hui ?",
+  "instructions": "Quand c'est pertinent, propose à l'apprenant de décrire un de ses propres fichiers (colonnes, nombre de lignes) et construis les exemples à partir de celui-ci. Les chemins de menus sont ceux d'Excel 365 en français ; si l'apprenant utilise une autre version (Mac, 2016, Google Sheets), adapte les indications.",
+  "modules": [
+    {
+      "id": "preparer-donnees",
+      "title": "Préparer ses données",
+      "objectives": [
+        "Identifier les défauts qui empêchent un TCD de fonctionner",
+        "Transformer une plage en Tableau structuré"
+      ],
+      "content": "Un TCD s'appuie sur une source « base de données » : une ligne d'en-têtes unique, un en-tête par colonne (pas de cellules vides ni fusionnées dans les en-têtes), une ligne = un enregistrement (une vente, un salarié…), une colonne = un seul type d'information (dates dans une colonne, montants dans une autre), aucune ligne ni colonne entièrement vide au milieu, pas de sous-totaux intégrés.\n\nDéfauts fréquents : dates saisies en texte, nombres stockés en texte (triangle vert), espaces en trop, libellés incohérents (« Paris », « paris », « PARIS »).\n\nBonne pratique : convertir la plage en Tableau (Accueil > Mettre sous forme de tableau, ou Ctrl+L). Avantages : la source du TCD s'agrandit automatiquement quand on ajoute des lignes, et le tableau porte un nom (ex. Ventes)."
+    },
+    {
+      "id": "construire-tcd",
+      "title": "Construire son premier TCD",
+      "objectives": [
+        "Insérer un TCD depuis une source de données",
+        "Placer les champs dans les zones Lignes, Colonnes, Valeurs et Filtres"
+      ],
+      "content": "Insertion : cliquer dans la source, puis Insertion > Tableau croisé dynamique, choisir « Nouvelle feuille de calcul ».\n\nLe volet « Champs de tableau croisé dynamique » contient la liste des colonnes et quatre zones :\n- Lignes : les catégories affichées verticalement (ex. Commercial) ;\n- Colonnes : les catégories affichées horizontalement (ex. Trimestre) ;\n- Valeurs : ce qu'on calcule (ex. somme du Montant) ;\n- Filtres : un filtre global au-dessus du tableau (ex. Région).\n\nMéthode : partir de la question métier (« Quel chiffre d'affaires par commercial et par trimestre ? ») : ce qu'on veut mesurer va dans Valeurs, les axes d'analyse dans Lignes/Colonnes.\n\nPar défaut, un champ numérique est additionné (Somme) et un champ texte est compté (Nombre). On change le calcul via Paramètres des champs de valeurs (Somme, Nombre, Moyenne, Max, Min…). Le format nombre se règle dans ce même menu (bouton Format de nombre) pour qu'il soit conservé à l'actualisation."
+    },
+    {
+      "id": "filtrer-trier-grouper",
+      "title": "Filtrer, trier et regrouper",
+      "objectives": [
+        "Trier un TCD par valeurs",
+        "Filtrer (étiquettes, valeurs, Top 10)",
+        "Grouper des dates par mois/trimestre/année et des nombres par tranches"
+      ],
+      "content": "Tri : clic droit sur une valeur > Trier > du plus grand au plus petit.\n\nFiltres : la flèche de l'en-tête des lignes propose Filtres s'appliquant aux étiquettes (commence par, contient…) et Filtres s'appliquant aux valeurs, dont « 10 premiers » pour un Top N.\n\nGroupement : sur un champ date placé en lignes, clic droit > Grouper, puis choisir Mois, Trimestres, Années (sélection multiple possible). Excel 365 groupe souvent automatiquement les dates. Sur un champ numérique (ex. âge, montant), Grouper permet de créer des tranches (début, fin, par pas de 10). On peut aussi grouper manuellement des éléments texte sélectionnés (ex. créer « Grand Ouest » avec plusieurs régions)."
+    },
+    {
+      "id": "calculs",
+      "title": "Pourcentages et champs calculés",
+      "objectives": [
+        "Afficher des valeurs en % du total, de la ligne ou de la colonne",
+        "Créer un champ calculé simple"
+      ],
+      "content": "Afficher les valeurs : clic droit sur une valeur > Afficher les valeurs > % du total général, % du total de la colonne, % du total de la ligne, Différence par rapport à, Résultat cumulé… Astuce : placer deux fois le même champ dans Valeurs, l'un en somme, l'autre en %.\n\nChamp calculé : Analyse du tableau croisé dynamique > Champs, éléments et jeux > Champ calculé. Exemple : Marge = Montant - Coût. Attention : un champ calculé s'applique aux SOMMES des champs, pas ligne à ligne ; pour un ratio (ex. marge en %), c'est correct car calculé sur les totaux, mais pour un produit (quantité × prix) il faut plutôt ajouter une colonne dans la source."
+    },
+    {
+      "id": "actualiser-presenter",
+      "title": "Actualiser et présenter",
+      "objectives": [
+        "Actualiser un TCD après modification des données",
+        "Ajouter segments, chronologie et graphique croisé dynamique"
+      ],
+      "content": "Un TCD ne se met PAS à jour automatiquement : clic droit > Actualiser (ou Alt+F5 ; Ctrl+Alt+F5 pour tout actualiser). Si la source est un Tableau, les nouvelles lignes sont incluses ; sinon il faut Modifier la source de données.\n\nSegments : Analyse du tableau croisé dynamique > Insérer un segment : boutons de filtrage visuels, pouvant piloter plusieurs TCD (Connexions de rapport). Chronologie : filtre visuel dédié aux dates.\n\nGraphique croisé dynamique : Analyse > Graphique croisé dynamique ; il suit les filtres du TCD. Mise en forme : onglet Création (styles, disposition du rapport « sous forme tabulaire », sous-totaux, totaux généraux)."
+    }
+  ]
+}

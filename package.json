@@ -1,0 +1,23 @@
+{
+  "name": "training-agent",
+  "version": "1.0.0",
+  "description": "Agent IA conversationnel qui adapte une formation en ligne à chaque apprenant — widget intégrable dans n'importe quel site.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env --watch server.js",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tonyjurado66-prog/Training-Agent.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0"
+  }
+}
