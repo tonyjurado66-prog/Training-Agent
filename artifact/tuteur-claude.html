@@ -210,7 +210,7 @@ dl.facts dd { margin: 0; }
           <button type="submit" class="send" id="send">Envoyer</button>
           <button type="button" class="stop" id="stop" hidden>Arrêter</button>
         </form>
-        <p class="fine">Réponses générées par Claude avec votre compte : elles peuvent contenir des erreurs.</p>
+        <p class="fine" id="status">Connexion à Claude…</p>
       </div>
     </section>
 
@@ -256,6 +256,7 @@ dl.facts dd { margin: 0; }
     busy: false,
     ctl: null,
     sample: undefined, // undefined = en attente, null = indisponible
+    reason: "",        // pourquoi Claude est indisponible (affiché à l'apprenant)
   };
 
   function loadCourses() {
@@ -383,7 +384,8 @@ dl.facts dd { margin: 0; }
   async function send(text, { kind } = {}) {
     text = text.trim();
     if (!text || state.busy) return;
-    if (!state.sample) return;
+    if (state.sample === undefined) { note("Connexion à Claude en cours… Réessayez dans quelques secondes (votre message est conservé).", true); return; }
+    if (!state.sample) { note(unavailableText(), true); return; }
     if (!state.log.length) state.profile.sessions += 1;
     state.log.push({ role: "learner", text, kind });
     save();
@@ -435,7 +437,7 @@ dl.facts dd { margin: 0; }
       renderLog();
       note(errorText(code), true);
       if (["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed", "session_expired"].includes(code)) {
-        disableChat(errorText(code));
+        disableChat(code);
       }
     } finally {
       if (state.ctl === ctl) { state.ctl = null; setBusy(false); }
@@ -541,8 +543,20 @@ dl.facts dd { margin: 0; }
   function banner() {
     const d = document.createElement("div");
     d.className = "banner";
-    d.textContent = "Le tuteur a besoin de Claude : ouvrez cette page sur claude.ai, connecté à votre compte, puis autorisez-la à utiliser Claude quand elle vous le demande.";
+    d.setAttribute("role", "alert");
+    d.textContent = unavailableText();
     return d;
+  }
+
+  function unavailableText() {
+    switch (state.reason) {
+      case "no-claude":
+        return "Cette page ne fonctionne qu'ouverte sur claude.ai. Ouvrez le lien de partage dans un navigateur (Chrome, Firefox, Safari, Edge), connecté à votre compte Claude.";
+      case "not-served":
+        return "claude.ai ne permet pas à cette page d'utiliser Claude dans cet affichage. Ouvrez le lien de partage dans un navigateur, connecté à votre compte Claude (pas en navigation privée ni en étant déconnecté), puis rechargez la page. [code : capacité indisponible]";
+      default:
+        return errorText(state.reason) + (state.reason ? ` [code : ${state.reason}]` : "");
+    }
   }
 
   function tutorBubble(html) {
@@ -609,7 +623,7 @@ dl.facts dd { margin: 0; }
   function renderSuggest() {
     const box = $("suggest");
     box.replaceChildren();
-    if (state.log.length || state.sample === null) return;
+    if (state.log.length) return;
     const items = state.profile.sessions > 0
       ? ["On reprend où j'en étais", "Fais-moi réviser mes points faibles", "Teste-moi avec un quiz"]
       : ["Je débute complètement", "J'ai déjà des bases", "Présente-moi le programme"];
@@ -617,7 +631,7 @@ dl.facts dd { margin: 0; }
       const b = document.createElement("button");
       b.type = "button";
       b.textContent = t;
-      b.disabled = state.busy || !state.sample;
+      b.disabled = state.busy;
       b.addEventListener("click", () => send(t));
       box.append(b);
     }
@@ -670,18 +684,25 @@ dl.facts dd { margin: 0; }
     state.busy = on;
     $("send").hidden = on;
     $("stop").hidden = !on;
-    $("input").disabled = on || !state.sample;
+    $("input").disabled = on;
     $("new-session").disabled = on;
     $("course").disabled = on;
     document.querySelectorAll(".suggest button, .quiz .opts button, .quiz .skip").forEach((b) => { if (on) b.disabled = true; });
     if (!on) { renderSuggest(); $("input").focus({ preventScroll: true }); }
   }
 
-  function disableChat() {
+  function disableChat(code) {
     state.sample = null;
-    $("input").disabled = true;
-    $("send").disabled = true;
+    state.reason = code || "not-served";
     renderLog();
+    updateStatus();
+  }
+
+  function updateStatus() {
+    const el = $("status");
+    if (state.sample === undefined) el.textContent = "Connexion à Claude…";
+    else if (state.sample) el.textContent = "Réponses générées par Claude avec votre compte : elles peuvent contenir des erreurs.";
+    else el.textContent = "Claude indisponible dans cet affichage (voir le message ci-dessus).";
   }
 
   function scrollDown() { const l = $("log"); l.scrollTop = l.scrollHeight; }
@@ -803,15 +824,17 @@ dl.facts dd { margin: 0; }
   // ------------------------------------------------------------------ Démarrage
   loadCourses();
   selectCourse(store.get("course", state.courses[0].id));
-  $("input").disabled = true;
-  $("send").disabled = true;
+  updateStatus();
 
-  const connect = window.claude && typeof window.claude.use === "function" ? window.claude.use("sample") : Promise.resolve(null);
+  // Le champ de saisie reste toujours actif : si Claude n'est pas disponible,
+  // l'apprenant voit pourquoi au lieu d'un champ grisé sans explication.
+  const hasClaude = window.claude && typeof window.claude.use === "function";
+  const connect = hasClaude ? window.claude.use("sample") : Promise.resolve(null);
   connect.then((sample) => {
     state.sample = sample || null;
-    $("input").disabled = !sample;
-    $("send").disabled = !sample;
+    if (!sample) state.reason = hasClaude ? "not-served" : "no-claude";
     renderLog();
-  }, () => { state.sample = null; renderLog(); });
+    updateStatus();
+  }, () => { state.sample = null; state.reason = "not-served"; renderLog(); updateStatus(); });
 })();
 </script>
