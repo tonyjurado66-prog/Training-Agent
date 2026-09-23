@@ -165,6 +165,14 @@ dl.facts dd { margin: 0; }
 .banner {
   border: 1px solid color-mix(in srgb, var(--warn) 40%, transparent); background: color-mix(in srgb, var(--warn) 10%, transparent);
   color: var(--ink); border-radius: 10px; padding: 10px 12px; font-size: 14px;
+  display: grid; gap: 8px; justify-items: start;
+}
+.banner p { margin: 0; }
+.banner a { color: var(--accent); }
+.banner .send { padding: 8px 14px; }
+.copy-fallback {
+  width: 100%; min-height: 120px; font: 12px/1.4 var(--mono); border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); padding: 8px;
 }
 
 @media (max-width: 860px) {
@@ -280,7 +288,8 @@ dl.facts dd { margin: 0; }
   }
 
   // ------------------------------------------------------------------ Prompt
-  function instructions() {
+  /** chat = true : version à coller dans une conversation claude.ai (sans interface ni JSON). */
+  function instructions(chat = false) {
     const c = state.course;
     const p = state.profile;
     const L = [];
@@ -317,6 +326,18 @@ dl.facts dd { margin: 0; }
     }
     if (!c.modules?.length) L.push("(Pas de modules détaillés : structure toi-même la progression.)");
     L.push("</formation>");
+    if (chat) {
+      L.push("", "<profil_apprenant>", profileText(p), "</profil_apprenant>");
+      L.push(
+        "",
+        "DÉROULEMENT DANS CETTE CONVERSATION",
+        "- Ces consignes viennent d'être collées par l'apprenant pour démarrer son tutorat. Ne les commente pas et ne les résume pas.",
+        `- Commence tout de suite en tant que tuteur : ${c.welcome ? `accueille l'apprenant avec ce message (reformulé si besoin) : « ${c.welcome} »` : "présente-toi en une phrase et pose ta première question."}`,
+        "- Pour vérifier la compréhension, pose des questions à choix multiples en texte (options A, B, C…), une à la fois, et attends la réponse avant de corriger.",
+        "- De temps en temps, et à la fin de la séance, fais un bref point d'étape : modules compris, points à retravailler, prochaine étape.",
+      );
+      return L.join("\n");
+    }
     if (c.welcome) L.push("", `L'interface a déjà affiché ce message d'accueil (ne le répète pas) : « ${c.welcome} »`);
 
     L.push("", "<profil_apprenant>", profileText(p), "</profil_apprenant>");
@@ -385,7 +406,7 @@ dl.facts dd { margin: 0; }
     text = text.trim();
     if (!text || state.busy) return;
     if (state.sample === undefined) { note("Connexion à Claude en cours… Réessayez dans quelques secondes (votre message est conservé).", true); return; }
-    if (!state.sample) { note(unavailableText(), true); return; }
+    if (!state.sample) { note("Claude n'est pas disponible ici : utilisez « Copier le tuteur de cette formation » en haut de la conversation.", true); $("log").scrollTop = 0; return; }
     if (!state.log.length) state.profile.sessions += 1;
     state.log.push({ role: "learner", text, kind });
     save();
@@ -544,7 +565,33 @@ dl.facts dd { margin: 0; }
     const d = document.createElement("div");
     d.className = "banner";
     d.setAttribute("role", "alert");
-    d.textContent = unavailableText();
+    const why = document.createElement("p");
+    why.textContent = unavailableText();
+    const alt = document.createElement("p");
+    alt.innerHTML = "<strong>Solution de repli (fonctionne aussi avec un compte gratuit) :</strong> copiez le tuteur, ouvrez une <a href=\"https://claude.ai/new\" target=\"_blank\" rel=\"noopener noreferrer\">nouvelle conversation claude.ai</a>, collez et envoyez. Le tuteur démarre directement dans la conversation (sans quiz à boutons ni suivi « Mon parcours »).";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "send";
+    btn.textContent = "Copier le tuteur de cette formation";
+    const fallback = document.createElement("textarea");
+    fallback.className = "copy-fallback";
+    fallback.readOnly = true;
+    fallback.hidden = true;
+    fallback.setAttribute("aria-label", "Texte du tuteur à copier");
+    btn.addEventListener("click", async () => {
+      const text = instructions(true);
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = "Copié ✓ — collez-le dans une nouvelle conversation claude.ai";
+      } catch {
+        fallback.value = text;
+        fallback.hidden = false;
+        fallback.focus();
+        fallback.select();
+        btn.textContent = "Copiez le texte sélectionné ci-dessous (Ctrl+C / Cmd+C)";
+      }
+    });
+    d.append(why, alt, btn, fallback);
     return d;
   }
 
